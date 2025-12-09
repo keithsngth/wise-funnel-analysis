@@ -2,64 +2,76 @@
 
 ## 1. Project Overview
 
-This project analyses user conversion funnels for Wise's proposed **INR → USD currency transfer route**, focusing on post-launch performance evaluation and insights to guide product decisions.
+### Background
 
-### What It Does
+Wise's Regional Expansion Tribe launched the INR → USD currency route to enable fast, low-cost transfers for education, travel, and business use cases. Following initial market validation, this project evaluates the route's first eight weeks of performance to understand adoption, conversion, and friction points.
 
-The analysis examines user behaviour across the transfer funnel stages (transaction creation → verification → completion) to identify:
-- Overall conversion rates and drop-off points
-- Performance variations by platform (iOS, Android, Web)
-- Regional and user experience differences
-- Time-to-complete metrics and friction points
-- Temporal trends in funnel performance
+The analysis addresses two core areas:
 
-### Key Questions Addressed
+1. **Demand Estimation**
+   - How can we assess potential demand for the corridor?
+   - Is the route likely to be profitable for Wise?
 
-Based on the investment decision framework, this analysis answers:
-
-**Post-Launch Evaluation:**
-- Is the route performance on track after launch?
-- What are key post-launch insights for the product team?
-
-**Demand Validation:**
-- What is the actual user adoption rate?
-- How does conversion vary by segment (platform, region, experience level)?
-- Where are the main friction points causing drop-offs?
+2. **Post-Launch Evaluation**
+   - Is performance on track after launch?
+   - What insights should the product team act on?
 
 ### Methodology
 
-The analysis employs several complementary approaches:
+#### A. Demand Estimation Approach
 
-1. **Funnel Analysis**: Step-by-step conversion tracking across transaction stages (create → verify → complete)
-2. **Cohort Segmentation**: Comparing performance across:
-   - Platforms (iOS, Android, Web)
-   - User regions (India, USA, Other)
-   - User experience levels (New vs. Experienced)
-3. **Time-Series Analysis**: Tracking funnel metrics over time to identify trends and anomalies
-4. **Friction Analysis**: Measuring time-to-complete and identifying stages with excessive duration
-5. **SQL + Python Stack**: Leveraging DuckDB for analytical queries and Python (pandas, plotly) for visualisation
+**1. External Market Sizing (Top-Down)**
 
----
+Estimate potential corridor demand by assessing India–US cross-border money movement across major economic segments using publicly available data.
+
+Potential data sources:
+- **Department of Economic Affairs, Government of India:** Outward remittances
+- **ICEF Monitor:** Indian student mobility and education spending
+- **Ministry of Commerce:** Bilateral India–US trade flows
+- **SEVIS:** Indian student enrolment in the US
+
+These provide a macro-level view of monetary flows that could translate into INR → USD transfer volume.
+
+**2. Internal Demand Signals (Bottom-Up)**
+
+Quantify latent demand and behavioural intent using Wise's user and transaction data.
+
+Key analytical lenses:
+- **Customer base sizing:** Count active users with Indian residency or funding sources to estimate corridor-ready users
+- **Proxy routes:** Identify multi-currency hops (e.g., INR → GBP → USD) indicating indirect demand
+- **Intent analysis:** Review event logs where users attempted INR → USD before route availability
+- **Customer feedback:** Analyse support tickets for repeated requests relating to USD payouts
+
+#### B. Post-Launch Evaluation Framework
+
+The analysis examines eight weeks of usage data through three complementary lenses:
+
+1. **Post-Launch Adoption:** Assess adoption of the new route by tracking user volumes through each transfer step
+2. **Funnel Analysis:** Identify potential drop-off points and churn across each user segment's transfer journey
+3. **Friction Analysis:** Evaluate the lag across transfer stage transitions for users who complete the transfer
 
 ## 2. Project Structure
 
 ```
 wise-funnel-analysis/
-├── README.md                      # Project documentation (this file)
-├── pyproject.toml                 # UV project configuration & dependencies
-├── uv.lock                        # Locked dependency versions
+├── README.md                                  # Project documentation
+├── pyproject.toml                             # UV project configuration & dependencies
+├── uv.lock                                    # Locked dependency versions
 │
 ├── config/
-│   └── config.yaml                # Database and application settings
+│   └── config.yaml                            # Database and application settings
 │
 ├── data/
-│   └── wise_funnel_events.csv     # Raw funnel event data
+│   └── wise_funnel_events.csv                 # Raw funnel event data
 │
 ├── database/
-│   └── wise_analytics.duckdb      # DuckDB analytical database
+│   └── wise_analytics.duckdb                  # DuckDB analytical database
 │
 ├── notebooks/
-│   └── funnel_analysis.ipynb      # Main Jupyter analysis notebook
+│   └── funnel_analysis.ipynb                  # Main Jupyter notebook for analysis
+│
+├── slides/
+│   └── wise-case-study.pdf                    # Slide deck for case study presentation
 │
 ├── sql/
 │   ├── create_transactions_table.sql          # Table schema definition
@@ -73,12 +85,9 @@ wise-funnel-analysis/
 │
 └── src/
     ├── __init__.py
-    ├── main.py                    # Entry point for data pipeline
-    ├── database_manager.py        # DuckDB connection & query execution
-    └── dataframe_processor.py     # Data transformation utilities
+    ├── database_manager.py                    # DuckDB connection & query execution
+    └── dataframe_processor.py                 # Data transformation utilities
 ```
-
----
 
 ## 3. Getting Started
 
@@ -134,7 +143,7 @@ This will install:
 
 ### Running the Analysis Notebook
 
-1. **Start Jupyter Lab/Notebook**
+1. **Start Jupyter Notebook**
 
 ```bash
 jupyter notebook
@@ -164,26 +173,51 @@ database:
 
 ### Running SQL Queries Directly
 
-You can execute SQL queries against DuckDB using the CLI:
+You can execute SQL queries against DuckDB using the CLI.
+
+**First, install DuckDB CLI:**
+
+```bash
+curl https://install.duckdb.org | sh
+```
+
+**Connect to the database:**
 
 ```bash
 duckdb database/wise_analytics.duckdb
 ```
 
-Then run queries interactively or execute SQL files:
+**Once inside the DuckDB CLI, you can:**
 
+Run SQL queries directly:
+```sql
+SELECT * FROM TRANSACTIONS LIMIT 5;
+```
+
+Execute SQL files:
 ```sql
 .read sql/funnel_by_platform.sql
+```
+
+**Alternatively, run queries without entering interactive mode:**
+
+```bash
+# Run a single query
+duckdb database/wise_analytics.duckdb "SELECT * FROM TRANSACTIONS LIMIT 100;"
+
+# Execute a SQL file and save output
+duckdb database/wise_analytics.duckdb < sql/funnel_by_platform.sql
 ```
 
 ## 5. Future Work
 
 ### Potential Enhancements
-- **Transaction value analysis** - Incorporate transfer amount data to understand relationship between cart size and conversion rates
-- **Experimentation framework** - Design and implement A/B tests to validate insights and measure impact of product improvements
-- **Predictive analytics** - Develop machine learning models to forecast transaction completion probability and identify at-risk users
-- **Real-time dashboard** - Build Streamlit-based visualisation tool for stakeholders to monitor funnel performance dynamically
-- **Longitudinal cohort study** - Analyse user journey progression from new to experienced customers over time (currently limited by data quality issues in sample dataset)
+
+- **Transaction value analysis:** Incorporate transfer amount data to understand relationship between cart size and conversion rates
+- **Experimentation framework:** Design and implement A/B tests to validate insights and measure impact of product improvements
+- **Predictive analytics:** Develop machine learning models to forecast transaction completion probability and identify at-risk users
+- **Real-time dashboard:** Build Streamlit-based visualisation tool for stakeholders to monitor funnel performance dynamically
+- **Longitudinal cohort study:** Analyse user journey progression from new to experienced customers over time (currently limited by data quality issues in sample dataset)
 
 ## 6. Authors
 
