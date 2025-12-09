@@ -1,0 +1,87 @@
+[project]
+name = "wise-funnel-analysis"
+version = "0.1.0"
+description = "Funnel analysis for Wise INR → USD transfer route"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "duckdb>=1.4.2",
+    "fire>=0.7.1",
+    "ipykernel>=7.1.0",
+    "jupyter>=1.1.1",
+    "loguru>=0.7.3",
+    "matplotlib>=3.10.7",
+    "pandas>=2.3.3",
+    "plotly>=6.5.0",
+    "python-dotenv>=1.0.0",
+    "pyyaml>=6.0.3",
+    "seaborn>=0.13.2",
+    "sqlfluff>=3.0.0",
+    "streamlit>=1.28.0",
+]
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
+
+# SQLFluff Configuration - Snowflake SQL Linter
+[tool.sqlfluff.core]
+dialect = "snowflake"
+templater = "raw"
+max_line_length = 100
+exclude_rules = ["RF04"]
+
+[tool.sqlfluff.indentation]
+indent_unit = "space"
+tab_space_size = 4
+indented_joins = false
+indented_ctes = false
+indented_using_on = true
+indented_on_contents = true
+
+[tool.sqlfluff.layout.type.comma]
+line_position = "leading"
+
+[tool.sqlfluff.rules]
+capitalisation_policy = "upper"
+extended_capitalisation_policy = "upper"
+allow_scalar = true
+
+[tool.sqlfluff.rules.aliasing.table]
+aliasing = "explicit"
+
+[tool.sqlfluff.rules.aliasing.column]
+aliasing = "explicit"
+
+[tool.sqlfluff.rules.aliasing.expression]
+allow_scalar = true
+
+[tool.sqlfluff.rules.capitalisation.keywords]
+capitalisation_policy = "upper"
+
+[tool.sqlfluff.rules.capitalisation.identifiers]
+extended_capitalisation_policy = "upper"
+
+[tool.sqlfluff.rules.capitalisation.functions]
+extended_capitalisation_policy = "upper"
+
+[tool.sqlfluff.rules.capitalisation.literals]
+capitalisation_policy = "upper"
+
+[tool.sqlfluff.rules.capitalisation.types]
+extended_capitalisation_policy = "upper"
+
+[tool.sqlfluff.rules.layout.long_lines]
+ignore_comment_lines = true
+ignore_comment_clauses = true
+
+[tool.sqlfluff.rules.references.keywords]
+unquoted_identifiers_policy = "all"
+
+[tool.sqlfluff.rules.references.quoting]
+prefer_quoted_identifiers = false
+prefer_quoted_keywords = false

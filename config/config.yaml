@@ -1,0 +1,12 @@
+# Database config
+database:
+  table_name: "TRANSACTIONS"
+  database_path: "database/wise_analytics.duckdb"
+  raw_data_path: "data/wise_funnel_events.csv"
+  table_schema_path: "sql/create_transactions_table.sql"
+
+# Streamlit dashboard settings
+streamlit:
+  page_title: "Wise Funnel Analysis Dashboard"
+  page_icon: "📊"
+  layout: "wide"

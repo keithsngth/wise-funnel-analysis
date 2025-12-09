@@ -1,0 +1,8 @@
+# Project specific files
+admin/
+slides/
+
+# Python specific files
+wise_funnel_analysis.egg-info
+src/__pycache__
+.DS_Store
